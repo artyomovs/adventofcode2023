@@ -10,7 +10,7 @@ def main():
     parser.add_argument("-s", "--sample", action="store_true", dest="sample", help="Whether to use sample input")
     args = parser.parse_args()
 
-    day_solution = importlib.import_module(f"days.day{args.day}").Challenge(args.sample)
+    day_solution = importlib.import_module(f"days.day{args.day}").Challenge(args.day, args.sample)
     results = day_solution.solve_quest()
 
 

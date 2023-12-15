@@ -1,9 +1,9 @@
 from pathlib import Path
 
 class AdventOfCode:
-    def __init__(self, sample: bool = False):
-        self.lines = Path("input.txt").read_text().splitlines()
-        self.sample_lines = Path("sample_input.txt").read_text().splitlines()
+    def __init__(self, day: int = 1, sample: bool = False):
+        self.lines = Path(f"inputs/input_{day}.txt").read_text().splitlines()
+        self.sample_lines = Path(f"inputs/sample_input_{day}.txt").read_text().splitlines()
         self.sample = sample
         self.result = "PLACEHOLDER"
         self.parsed_input = []
