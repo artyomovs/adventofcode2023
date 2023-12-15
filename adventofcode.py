@@ -5,6 +5,8 @@ class AdventOfCode:
         self.lines = Path("input.txt").read_text().splitlines()
         self.sample_lines = Path("sample_input.txt").read_text().splitlines()
         self.sample = sample
+        self.result = "PLACEHOLDER"
+        self.parsed_input = []
 
     def solve_quest(self):
         lines = self.sample_lines if self.sample else self.lines
