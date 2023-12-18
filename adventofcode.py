@@ -8,6 +8,7 @@ class AdventOfCode:
         self.result = "PLACEHOLDER"
         self.parsed_input = []
         self.found_dict = {}
+        self.parsed_dict = {}
         self.lines = []
 
     def solve_quest(self):
