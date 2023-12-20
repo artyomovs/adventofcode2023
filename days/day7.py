@@ -1,16 +1,19 @@
 from adventofcode import AdventOfCode
-from pprint import pprint
-import sys
 from itertools import product
 
 CARD_LABELS = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A']
 
 class Challenge(AdventOfCode):
 
+    def is_hand_bigger(self, hand1, hand2, with_joker = False):
+        hand1_strength = self.get_hand_strength(hand1) if not with_joker else self.get_hand_strength(self.find_best_combination_with_jokers(hand1))
+        hand2_strength = self.get_hand_strength(hand2) if not with_joker else self.get_hand_strength(self.find_best_combination_with_jokers(hand2))
 
-    def is_hand_bigger(self, hand1, hand2):
-        hand1_strength = self.get_hand_strength(hand1)
-        hand2_strength = self.get_hand_strength(hand2)
+        card_labels = list(CARD_LABELS)
+        if with_joker:
+            card_labels.remove("J")
+            card_labels.insert(0, "J")
+
 
         if hand1_strength > hand2_strength:
             return True
@@ -18,9 +21,8 @@ class Challenge(AdventOfCode):
             return False
         else:
             for i in range(0, 5):
-                index_1 = CARD_LABELS.index(hand1[i])
-                index_2 = CARD_LABELS.index(hand2[i])
-                # print(f"hand1 {hand1} hand1_first {hand1_first}. hand2 {hand2} hand2_first {hand2_first}")
+                index_1 = card_labels.index(hand1[i])
+                index_2 = card_labels.index(hand2[i])
                 if index_1 == index_2:
                     continue
                 elif  index_1 > index_2:
@@ -53,8 +55,7 @@ class Challenge(AdventOfCode):
         else:
             return 1
 
-
-    def part_one(self, inputs):
+    def get_sum_of_best_combinations(self, with_joker=False):
         hand = self.lines[0].split(" ")[0].strip()
         bid = int(self.lines[0].split(" ")[1].strip())
         cards = [{"hand": hand, "bid": bid}]
@@ -70,7 +71,7 @@ class Challenge(AdventOfCode):
 
             for i in range(0, len(cards)):
                 hand2 = cards[i]["hand"]
-                if not self.is_hand_bigger(hand, hand2):
+                if not self.is_hand_bigger(hand, hand2, with_joker=with_joker):
                     # print(f"{hand} lower {hand2}. cards: {cards}")
                     cards.insert(i, new_card)
                     break
@@ -82,7 +83,7 @@ class Challenge(AdventOfCode):
             hand = cards[i-1]["hand"]
             total_sum += cards[i-1]["bid"] * i
 
-            print(f"hand {hand} rank {i} bid {bid} sum = {total_sum}")
+            # print(f"hand {hand} rank {i} bid {bid} sum = {total_sum}")
 
         return total_sum
 
@@ -90,7 +91,6 @@ class Challenge(AdventOfCode):
     def generate_combinations(self, input_string, replace_symbols):
         x_indices = [i for i, char in enumerate(input_string) if char == 'J']
         replacement_combinations = product(replace_symbols, repeat=len(x_indices))
-
         result_combinations = []
         for replacement_combination in replacement_combinations:
             new_string = list(input_string)
@@ -99,11 +99,26 @@ class Challenge(AdventOfCode):
             result_combinations.append("".join(new_string))
 
 
-        print(result_combinations)
+        return result_combinations
 
 
-
-    def part_two(self, inputs):
+    def find_best_combination_with_jokers(self, hand):
+        if hand.count("J") in [0, 5]:
+            return hand
         all_labels = list(CARD_LABELS)
         all_labels.remove("J")
-        self.generate_combinations("32TJK", all_labels)
+        combinations = self.generate_combinations(hand, all_labels)
+        # print(combinations)
+        best_combination = combinations[0]
+        print(f"for hand {hand} best combination {best_combination}")
+        for combination in combinations[1:]:
+            if self.is_hand_bigger(combination, best_combination):
+                best_combination = combination
+        return best_combination
+
+
+    def part_one(self, inputs):
+        return self.get_sum_of_best_combinations(with_joker=False)
+
+    def part_two(self, inputs):
+        return self.get_sum_of_best_combinations(with_joker=True)
